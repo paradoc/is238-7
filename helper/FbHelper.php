@@ -9,8 +9,6 @@ require_once('Handler.php');
  */
 class FbHelper
 {
-  private static $state_helper = [];
-
   /**
    * @param mixed $access_token
    */
@@ -67,17 +65,6 @@ class FbHelper
         'sender' => $sender,
         'message' => $message,
       ];
-
-      // Initialize states.
-      if (!in_array($sender, self::$state_helper)) {
-        $state = [
-          'is_done' => 0,
-          'handler' => null,
-          'response' => '',
-        ];
-
-        self::$state_helper[$sender] = $state;
-      }
     }
 
     return $this->request_data;
@@ -126,37 +113,19 @@ class FbHelper
    *
    * @return void
    */
-  private function get_handler($sender, $message)
-  {
-    if (!self::$state_helper[$sender]['handler'])
-      self::$state_helper[$sender]['handler'] = new Handler($message);
-
-    return self::$state_helper[$sender]['handler'];
-  }
-
-  /**
-   * undocumented function
-   *
-   * @return void
-   */
   public function process_request()
   {
+    $response = null;
     $sender = $this->get_request_data()['sender'];
     $message = $this->get_request_data()['message'];
 
     try {
-      $handler = $this->get_handler($sender, $message);
-
-      // Pass static property by reference.
-      $state =& self::$state_helper[$sender];
-      $handler->handle_request($state);
-      unset($state);
+      $handler = new Handler($message);
+      $response = $handler->handle_request();
     } catch (\Exception $e) {
       $this->send_response($e->getMessage());
     }
-    file_put_contents('php://stderr', print_r(self::$state_helper[$sender], TRUE));
 
-    $response = self::$state_helper[$sender]['response'];
     if ($response)
       $this->send_response($response);
   }

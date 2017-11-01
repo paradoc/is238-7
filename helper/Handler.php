@@ -29,7 +29,7 @@ class Handler
    *
    * @return void
    */
-  public function handle_request(&$state)
+  public function handle_request()
   {
     /* TODO: Update error messages. */
     $err = $this->lex();
@@ -42,8 +42,7 @@ class Handler
       throw new \Exception('Error in parsing: '.$err);
     }
 
-    $state['response'] = $response['message'];
-    $state['is_done'] = $response['is_done'];
+    return $response;
   }
 
   /**

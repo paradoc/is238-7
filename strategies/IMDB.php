@@ -7,10 +7,19 @@ use \strategies\Strategy as Strategy;
 
 /**
  * Class IMDB
- * @author yourname
+ * @author Mark Johndy Coprada
  */
 class IMDB implements Strategy
 {
+  /**
+   * @param mixed $request
+   */
+  public function __construct($request)
+  {
+    $this->request = $request;
+    $this->api_key = null;
+  }
+
   /**
    * undocumented function
    *
@@ -19,11 +28,28 @@ class IMDB implements Strategy
   public function get_response()
   {
     $err = null;
-    $response = [
-      'is_done' => 1,
-      'message' => 'No implementation yet.',
-    ];
+    $response = 'Not implemented yet.';
 
     return [$response, $err];
+  }
+
+  /**
+   * undocumented function
+   *
+   * @return void
+   */
+  public function set_api_key($key)
+  {
+    $this->api_key = $key;
+  }
+
+  /**
+   * undocumented function
+   *
+   * @return void
+   */
+  private function forward_request()
+  {
+    return null;
   }
 }
