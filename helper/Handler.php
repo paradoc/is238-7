@@ -2,6 +2,9 @@
 
 namespace helper;
 
+require_once(__DIR__.'/../strategies/IMDB.php');
+use \strategies\IMDB as IMDB;
+
 $_COMMANDS = [
   'IMDB', 'PHP', 'WEATHER', 'PHONE', 'GENDER', 'RECIPE', 'POKEDEX', 'IP',
   'HISTORY', 'TRUMP', 'UNIVERSITY', 'NETFLIX',
@@ -26,19 +29,21 @@ class Handler
    *
    * @return void
    */
-  public function handle_request()
+  public function handle_request(&$state)
   {
-    $response = null;
-
+    /* TODO: Update error messages. */
     $err = $this->lex();
     if ($err) {
       throw new \Exception('Error in token: '.$err);
     }
 
-    $err = $this->parse();
+    list($response, $err) = $this->parse();
     if ($err) {
       throw new \Exception('Error in parsing: '.$err);
     }
+
+    $state['response'] = $response['message'];
+    $state['is_done'] = $response['is_done'];
   }
 
   /**
@@ -48,20 +53,20 @@ class Handler
    */
   private function lex()
   {
-    $err = null;
     global $_COMMANDS;
+    $err = null;
 
     $this->message_arr = explode(' ', $this->trim_whitespaces($this->message));
-    $token = array_shift($this->message_arr);
+    $this->token = array_shift($this->message_arr);
     $this->message = implode(' ', $this->message_arr);
 
-    if (in_array(strtoupper($token), $_COMMANDS)) {
-      // Implement logic
+    if (in_array(strtoupper($this->token), $_COMMANDS)) {
+      ; // Valid token.
     } else {
-      $err = $token;
+      $err = $this->token;
 
       // Try analyzing possibilities
-      $match = $this->analyze_token($token);
+      $match = $this->analyze_token($this->token);
 
       if ($match)
         $err .= '. Did you mean '.$match.'?';
@@ -117,8 +122,23 @@ class Handler
    */
   private function parse()
   {
-    // Forward request to strategies.
-    return null;
-  }
+    $strategy = null;
+    $response = '';
+    $err = null;
 
+    // Forward request to strategies.
+    switch ($this->token) {
+      case 'IMDB':
+        $strategy = new IMDB($this->message);
+        break;
+      default:
+        break;
+    }
+
+    if ($strategy) {
+      list($response, $err) = $strategy->get_response();
+    }
+
+    return [$response, $err];
+  }
 }
