@@ -9,4 +9,5 @@ $verify_token = 'is238';
 $helper = new FbHelper($_REQUEST, $verify_token);
 $helper->set_access_token($access_token);
 
-$helper->process_request();
+if ($_REQUEST['hub_mode'] != 'subscribe')
+  $helper->process_request();
