@@ -9,15 +9,26 @@ use \strategies\Strategy as Strategy;
  * Class IMDB
  * @author Mark Johndy Coprada
  */
-class IMDB implements Strategy
+class IMDB extends Strategy
 {
+  private $url = 'http://www.omdbapi.com/';
+
   /**
-   * @param mixed $request
+   * undocumented function
+   *
+   * @return void
    */
-  public function __construct($request)
+  protected function format_response($response)
   {
-    $this->request = $request;
-    $this->api_key = null;
+    $formatted = null;
+    $response_arr = json_decode($response, true);
+
+    // file_put_contents('php://stderr', print_r($response_arr, TRUE));
+
+    $formatted = $response_arr['Title'].' ('.$response_arr['Year'].')\n'
+      .$response_arr['Plot'];
+
+    return $formatted;
   }
 
   /**
@@ -27,29 +38,21 @@ class IMDB implements Strategy
    */
   public function get_response()
   {
-    $err = null;
-    $response = 'Not implemented yet.';
+    $response = $err = null;
+
+    if (!$this->request) {
+      $err = 'Please input a movie title.';
+      return [$response, $err];
+    }
+
+    // Form request URL.
+    $this->set_api_key('d8b8ba2c');
+    $url = $this->url.'?apikey='.$this->api_key.'&t='.$this->request;
+
+    // Get data and format response.
+    $response = $this->get($url);
+    $response = $this->format_response($response);
 
     return [$response, $err];
-  }
-
-  /**
-   * undocumented function
-   *
-   * @return void
-   */
-  public function set_api_key($key)
-  {
-    $this->api_key = $key;
-  }
-
-  /**
-   * undocumented function
-   *
-   * @return void
-   */
-  private function forward_request()
-  {
-    return null;
   }
 }
