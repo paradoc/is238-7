@@ -6,8 +6,10 @@ require_once(__DIR__.'/../strategies/IMDB.php');
 use \strategies\IMDB as IMDB;
 
 $_COMMANDS = [
-  'IMDB', 'PHP', 'WEATHER', 'PHONE', 'GENDER', 'RECIPE', 'POKEDEX', 'IP',
-  'HISTORY', 'TRUMP', 'UNIVERSITY', 'NETFLIX',
+  'ECHO', 'IMDB', 'PHP', 'WEATHER',
+  'PHONE', 'GENDER', 'RECIPE', 'POKEDEX',
+  'IP', 'HISTORY', 'TRUMP', 'UNIVERSITY',
+  /* TODO: Add custom command. */
 ];
 
 /**

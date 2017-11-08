@@ -113,11 +113,94 @@ class FbHelper
    *
    * @return void
    */
+  public function get_session_data($sender)
+  {
+    $db = new \SQLite3('is238.db') or die ('Unable to open database.');
+    $session_data = null;
+
+    $statement = $db->prepare(
+      'SELECT data '.
+      'FROM sessions '.
+      'WHERE sender = :sender '.
+      'AND is_done = 0 '.
+      'ORDER BY timestamp DESC '.
+      'LIMIT 1'
+    );
+
+    // Bind values to query.
+    $statement->bindValue(':sender', $sender);
+
+    // Execute statement.
+    $results = $statement->execute();
+
+    // Process results.
+    while ($row = $results->fetchArray(SQLITE3_ASSOC)) {
+      $session_data = $row['data'];
+    }
+
+    return $session_data;
+  }
+
+  /**
+   * undocumented function
+   *
+   * @return void
+   */
+  public function add_session_data($sender, $session_data)
+  {
+    $db = new \SQLite3('is238.db') or die ('Unable to open database.');
+
+    $statement = $db->prepare(
+      'INSERT INTO sessions(sender, data, is_done) '.
+      'VALUES (:sender, :data, 0)'
+    );
+
+    // Bind values to query.
+    $statement->bindValue(':sender', $sender);
+    $statement->bindValue(':data', $session_data);
+
+    // Execute statement.
+    $results = $statement->execute();
+  }
+
+  /**
+   * undocumented function
+   *
+   * @return void
+   */
+  public function update_session_data($sender)
+  {
+    $db = new \SQLite3('is238.db') or die ('Unable to open database.');
+
+    $statement = $db->prepare(
+      'UPDATE sessions'.
+      'SET is_done = 1 '.
+      'WHERE sender = :sender'
+    );
+
+    // Bind values to query.
+    $statement->bindValue(':sender', $sender);
+
+    // Execute statement.
+    $results = $statement->execute();
+  }
+
+  /**
+   * undocumented function
+   *
+   * @return void
+   */
   public function process_request()
   {
     $response = null;
     $sender = $this->get_request_data()['sender'];
     $message = $this->get_request_data()['message'];
+    $session_data = $this->get_session_data($sender);
+
+    if ($session_data) {
+      /* TODO: Implement. */
+      return;
+    }
 
     try {
       $handler = new Handler($message);
