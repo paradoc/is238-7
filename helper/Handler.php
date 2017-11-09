@@ -20,10 +20,12 @@ class Handler
 {
   /**
    * @param mixed $message
+   * @param mixed $session_data
    */
-  public function __construct($message)
+  public function __construct($message, $session_data)
   {
     $this->message = $message;
+    $this->session_data = $session_data;
   }
 
   /**
@@ -61,9 +63,7 @@ class Handler
     $this->token = array_shift($this->message_arr);
     $this->message = implode(' ', $this->message_arr);
 
-    if (in_array(strtoupper($this->token), $_COMMANDS)) {
-      ; // Valid token.
-    } else {
+    if (!$this->is_valid_token($this->token)) {
       $err = $this->token;
 
       // Try analyzing possibilities
@@ -74,6 +74,27 @@ class Handler
     }
 
     return $err;
+  }
+
+  /**
+   * undocumented function
+   *
+   * @return void
+   */
+  private function is_valid_token($token)
+  {
+    $is_valid = false;
+
+    if (in_array(strtoupper($this->token), $_COMMANDS)) {
+      $is_valid = true;
+    } else if (is_integer($this->token)) {
+      $len = count($this->session_data['data']);
+
+      if ((intval($token) >= $len) || (intval($token) <= $len))
+        $is_valid = true;
+    }
+
+    return $is_valid;
   }
 
   /**
@@ -124,11 +145,21 @@ class Handler
   private function parse()
   {
     $strategy = null;
-    $response = '';
     $err = null;
+    $cached = false;
+    $response = '';
+    $token = $this->token;
+    $message = $this->message;
+
+    if ($this->session_data) {
+      $cached = true;
+      $selection = intval($token);
+      $token = $this->session_data['type'];
+      $message = $this->session_data[$selection];
+    }
 
     // Forward request to strategies.
-    switch ($this->token) {
+    switch ($token) {
       case 'IMDB':
         $strategy = new IMDB($this->message);
         break;
@@ -137,7 +168,7 @@ class Handler
     }
 
     if ($strategy) {
-      list($response, $err) = $strategy->get_response();
+      list($response, $err) = $strategy->get_response($cached);
     }
 
     return [$response, $err];

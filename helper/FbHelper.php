@@ -203,7 +203,7 @@ class FbHelper
     }
 
     try {
-      $handler = new Handler($message);
+      $handler = new Handler($message, $session_data);
       $response = $handler->handle_request();
     } catch (\Exception $e) {
       $this->send_response($e->getMessage());
