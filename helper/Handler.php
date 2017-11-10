@@ -25,7 +25,7 @@ class Handler
   public function __construct($message, $session_data)
   {
     $this->message = $message;
-    $this->session_data = $session_data;
+    $this->session_data = json_decode($session_data, true);
   }
 
   /**
@@ -83,6 +83,7 @@ class Handler
    */
   private function is_valid_token($token)
   {
+    global $_COMMANDS;
     $is_valid = false;
 
     if (in_array(strtoupper($this->token), $_COMMANDS)) {
@@ -161,9 +162,10 @@ class Handler
     // Forward request to strategies.
     switch ($token) {
       case 'IMDB':
-        $strategy = new IMDB($this->message);
+        $strategy = new IMDB($message);
         break;
       default:
+        $err = 'Unknown error in parsing.';
         break;
     }
 

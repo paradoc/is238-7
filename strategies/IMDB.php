@@ -23,7 +23,7 @@ class IMDB extends Strategy
     $formatted = null;
     $response_arr = json_decode($response, true);
 
-    // file_put_contents('php://stderr', print_r($response_arr, TRUE));
+    file_put_contents('php://stderr', print_r($response_arr, TRUE));
 
     $formatted = $response_arr['Title'].' ('.$response_arr['Year'].')\n'
       .$response_arr['Plot'];
@@ -36,18 +36,23 @@ class IMDB extends Strategy
    *
    * @return void
    */
-  public function get_response()
+  public function get_response($cached)
   {
     $response = $err = null;
+    $this->set_api_key('d8b8ba2c');
+
+    // Search.
+    $param = 's';
+
+    if ($cached)
+      $param = 't';
 
     if (!$this->request) {
       $err = 'Please input a movie title.';
       return [$response, $err];
     }
 
-    // Form request URL.
-    $this->set_api_key('d8b8ba2c');
-    $url = $this->url.'?apikey='.$this->api_key.'&t='.$this->request;
+    $url = $this->url.'?apikey='.$this->api_key.'&'.$param.'='.$this->request;
 
     // Get data and format response.
     $response = $this->get($url);

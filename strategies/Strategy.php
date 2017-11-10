@@ -4,7 +4,7 @@ namespace strategies;
 
 /**
  * Class Strategy
- * @author yourname
+ * @author Mark Johndy Coprada
  */
 abstract class Strategy
 {
@@ -53,7 +53,7 @@ abstract class Strategy
    *
    * @return void
    */
-  abstract public function get_response();
+  abstract public function get_response($cached);
 
   /**
    * undocumented function
