@@ -115,7 +115,7 @@ class FbHelper
    */
   public function get_session_data($sender)
   {
-    $db = new \SQLite3('is238.db') or die ('Unable to open database.');
+    $db = new \SQLite3('db/is238.db') or die ('Unable to open database.');
     $session_data = null;
 
     $statement = $db->prepare(
@@ -148,7 +148,7 @@ class FbHelper
    */
   public function add_session_data($sender, $session_data)
   {
-    $db = new \SQLite3('is238.db') or die ('Unable to open database.');
+    $db = new \SQLite3('db/is238.db') or die ('Unable to open database.');
 
     $statement = $db->prepare(
       'INSERT INTO sessions(sender, data, is_done) '.
@@ -170,10 +170,10 @@ class FbHelper
    */
   public function update_session_data($sender)
   {
-    $db = new \SQLite3('is238.db') or die ('Unable to open database.');
+    $db = new \SQLite3('db/is238.db') or die ('Unable to open database.');
 
     $statement = $db->prepare(
-      'UPDATE sessions'.
+      'UPDATE sessions '.
       'SET is_done = 1 '.
       'WHERE sender = :sender'
     );
@@ -192,24 +192,31 @@ class FbHelper
    */
   public function process_request()
   {
-    $response = null;
+    $response = $data = null;
     $sender = $this->get_request_data()['sender'];
     $message = $this->get_request_data()['message'];
     $session_data = $this->get_session_data($sender);
 
-    if ($session_data) {
-      /* TODO: Implement. */
-      return;
-    }
-
     try {
       $handler = new Handler($message, $session_data);
-      $response = $handler->handle_request();
+      list($response, $data) = $handler->handle_request();
     } catch (\Exception $e) {
       $this->send_response($e->getMessage());
     }
 
-    if ($response)
-      $this->send_response($response);
+    // Send response.
+    $this->send_response($response);
+
+    // Add session if necessary.
+    if (!$data['is_done'] && !$session_data) {
+      $session = [
+        'data' => $data['data'],
+        'type' => $data['type'],
+      ];
+      $this->add_session_data($sender, json_encode($session));
+    }
+
+    if ($data['is_done'])
+      $this->update_session_data($sender);
   }
 }

@@ -18,17 +18,74 @@ class IMDB extends Strategy
    *
    * @return void
    */
+  private function get_details($id)
+  {
+    $url = $this->url
+      ."?apikey={$this->api_key}"
+      ."&i={$id}&type=movie";
+
+    $response = json_decode($this->get($url), true);
+
+    return
+      "{$response['Title']} ({$response['Year']})\\n"
+      ."{$response['Plot']}";
+  }
+
+  /**
+   * undocumented function
+   *
+   * @return void
+   */
   protected function format_response($response)
   {
-    $formatted = null;
+    $formatted = $err = null;
     $response_arr = json_decode($response, true);
 
-    file_put_contents('php://stderr', print_r($response_arr, TRUE));
+    $success = $response_arr['Response'] === 'True';
 
-    $formatted = $response_arr['Title'].' ('.$response_arr['Year'].')\n'
-      .$response_arr['Plot'];
+    if (!$success) {
+      if (array_key_exists('Error', $response_arr))
+        $err = $response_arr['Error'];
+      else
+        $err = 'Unknown error in <format_response()>.';
 
-    return $formatted;
+      return [null, $err];
+    }
+
+    $search_data = $response_arr['Search'];
+    $total = $response_arr['totalResults'];
+
+    if ($total >= 10)
+      $total = 10;
+
+    $filtered = [
+      'data' => [],
+      'type' => 'IMDB',
+      'is_done' => 0,
+    ];
+
+    if ($total == 1) {
+      $filtered['is_done'] = 1;
+      $formatted = $this->get_details($search_data[0]['imdbID']);
+    } else {
+      $formatted = "There were multiple results in your search. You might want"
+        ." to narrow it down by being more specific. Which one were you "
+        ."referring to?\\n";
+
+      $i = 1;
+      foreach ($search_data as $data) {
+        $title = $data['Title'].' ('.$data['Year'].')';
+        $formatted .= $i.". ".$title."\\n";
+        array_push($filtered['data'], [
+          'title' => $title,
+          'id' => $data['imdbID'],
+        ]);
+
+        $i++;
+      }
+    }
+
+    return [$formatted, $filtered, $err];
   }
 
   /**
@@ -44,20 +101,29 @@ class IMDB extends Strategy
     // Search.
     $param = 's';
 
-    if ($cached)
+    if ($cached) {
       $param = 't';
+    } else {
+      if (!$this->request) {
+        $err = 'Please input a movie title.';
+        return [$response, $err];
+      }
 
-    if (!$this->request) {
-      $err = 'Please input a movie title.';
-      return [$response, $err];
+      $this->request = explode(' ',$this->request);
+      $this->request = implode('%20', $this->request);
     }
 
-    $url = $this->url.'?apikey='.$this->api_key.'&'.$param.'='.$this->request;
+    $url = $this->url
+      ."?apikey={$this->api_key}"
+      ."&{$param}=\"{$this->request}\""
+      ."&type=movie";
 
     // Get data and format response.
     $response = $this->get($url);
-    $response = $this->format_response($response);
 
-    return [$response, $err];
+    if ($cached)
+      return [$this->get_details($this->request), ['is_done' => 1], $err];
+    else
+      return $this->format_response($response);
   }
 }

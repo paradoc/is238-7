@@ -41,12 +41,12 @@ class Handler
       throw new \Exception('Error in token: '.$err);
     }
 
-    list($response, $err) = $this->parse();
+    list($response, $data, $err) = $this->parse();
     if ($err) {
-      throw new \Exception('Error in parsing: '.$err);
+      throw new \Exception($err);
     }
 
-    return $response;
+    return [$response, $data];
   }
 
   /**
@@ -86,9 +86,9 @@ class Handler
     global $_COMMANDS;
     $is_valid = false;
 
-    if (in_array(strtoupper($this->token), $_COMMANDS)) {
+    if (in_array(strtoupper($token), $_COMMANDS)) {
       $is_valid = true;
-    } else if (is_integer($this->token)) {
+    } else if (is_numeric($token)) {
       $len = count($this->session_data['data']);
 
       if ((intval($token) >= $len) || (intval($token) <= $len))
@@ -145,34 +145,33 @@ class Handler
    */
   private function parse()
   {
-    $strategy = null;
-    $err = null;
+    $strategy = $data = $err = null;
     $cached = false;
     $response = '';
-    $token = $this->token;
+    $token = strtoupper($this->token);
     $message = $this->message;
 
     if ($this->session_data) {
       $cached = true;
-      $selection = intval($token);
+      $selection = intval($token) - 1;
       $token = $this->session_data['type'];
-      $message = $this->session_data[$selection];
+      $message = $this->session_data['data'][$selection];
     }
 
     // Forward request to strategies.
     switch ($token) {
       case 'IMDB':
-        $strategy = new IMDB($message);
+        $strategy = new IMDB($message['id']);
         break;
       default:
-        $err = 'Unknown error in parsing.';
+        $err = 'Unknown error in parsing token: '.$token;
         break;
     }
 
     if ($strategy) {
-      list($response, $err) = $strategy->get_response($cached);
+      list($response, $data, $err) = $strategy->get_response($cached);
     }
 
-    return [$response, $err];
+    return [$response, $data, $err];
   }
 }
