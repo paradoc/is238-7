@@ -4,6 +4,8 @@ namespace helper;
 
 require_once(__DIR__.'/../strategies/IMDB.php');
 use \strategies\IMDB as IMDB;
+require_once(__DIR__.'/../strategies/IP.php');
+use \strategies\IP as IP;
 
 $_COMMANDS = [
   'IMDB', 'PHP', 'WEATHER', 'PHONE', 'GENDER', 'RECIPE', 'POKEDEX', 'IP',
@@ -126,9 +128,12 @@ class Handler
     $err = null;
 
     // Forward request to strategies.
-    switch ($this->token) {
+    switch (strtoupper($this->token)) {
       case 'IMDB':
         $strategy = new IMDB($this->message);
+        break;
+      case 'IP':
+        $strategy = new IP($this->message);
         break;
       default:
         break;
