@@ -23,7 +23,7 @@ $_COMMANDS = [
 class Handler
 {
   /**
-   * @param string $message The received message to be parsed.
+   * @param mixed $message
    */
   public function __construct($message)
   {
@@ -31,11 +31,9 @@ class Handler
   }
 
   /**
-   * Handles the request using a lexer and parser which eventually sends back
-   * a response to be handled back to the FbHelper class.
+   * undocumented function
    *
-   * @throws Exception when an error occurs while processing the request.
-   * @return mixed String if the API returned only 1 response; Array otherwise.
+   * @return void
    */
   public function handle_request()
   {
@@ -54,9 +52,9 @@ class Handler
   }
 
   /**
-   * Main logic for lexical analysis.
+   * undocumented function
    *
-   * @return mixed String if errors occur; null otherwise.
+   * @return void
    */
   private function lex()
   {
@@ -83,9 +81,9 @@ class Handler
   }
 
   /**
-   * Analyzes the current token in hand if it matches the commands available.
+   * undocumented function
    *
-   * @return mixed Matched command; null otherwise.
+   * @return void
    */
   private function analyze_token($token)
   {
@@ -104,9 +102,9 @@ class Handler
 
 
   /**
-   * Trims the input of extra whitespaces.
+   * undocumented function
    *
-   * @return string Trimmed message.
+   * @return void
    */
   private function trim_whitespaces($message)
   {
@@ -123,9 +121,9 @@ class Handler
 
 
   /**
-   * Main logic for parsing. This forwards request to appropriate strategies.
+   * undocumented function
    *
-   * @return array Contains the response array/string and errors if any.
+   * @return void
    */
   private function parse()
   {
