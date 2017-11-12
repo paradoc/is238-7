@@ -6,12 +6,12 @@ require_once('Strategy.php');
 use \strategies\Strategy as Strategy;
 
 /**
- * Class IMDB
+ * Class University
  * @author Mark Johndy Coprada
  */
-class IMDB extends Strategy
+class University extends Strategy
 {
-  private $url = 'http://www.omdbapi.com/';
+  private $url = 'http://universities.hipolabs.com/';
 
   /**
    * Formats raw response received from API.
@@ -21,15 +21,36 @@ class IMDB extends Strategy
    */
   protected function format_response($response)
   {
-    $formatted = null;
+    $formatted = [];
     $response_arr = json_decode($response, true);
 
-    if ($response_arr['Response'] === 'False')
-      return $response_arr['Error'];
+    if (!$response_arr)
+      return 'There are no universities with that name.';
 
-    $formatted = $response_arr['Title'].' ('.$response_arr['Year'].')\n'
-      .'IMDB Rating: '.$response_arr['imdbRating'].'\n'
-      .'Plot: '.$response_arr['Plot'];
+    $count = count($response_arr);
+
+    if ($count > 1) {
+     array_push($formatted, "There were {$count} results in your search. "
+       ."You might want to narrow it down further? "
+       ."Anyway, here are a few of them with their respective websites:");
+
+      $i = 1;
+      foreach ($response_arr as $university) {
+        $data = $i.'. '.$university['name'].': ';
+
+        if ($university['web_pages'])
+          $data .= array_pop($university['web_pages']);
+        else
+          $data .= 'n/a';
+
+        array_push($formatted, $data);
+
+        if ($i++ == 3) break;
+      }
+    } else {
+      array_push($formatted, $response_arr[0]['name'].': '
+        .$response_arr[0]['web_pages'][0]);
+    }
 
     return $formatted;
   }
@@ -45,7 +66,7 @@ class IMDB extends Strategy
 
     // Return as we require requests to be not empty.
     if (!$this->request) {
-      $err = 'Please input a movie title.';
+      $err = 'Please input a university name.';
       return [$response, $err];
     }
 
@@ -53,8 +74,7 @@ class IMDB extends Strategy
     $this->request = $this->sanitize($this->request);
 
     // Form request URL.
-    $this->set_api_key('d8b8ba2c');
-    $url = $this->url.'?apikey='.$this->api_key.'&t='.$this->request;
+    $url = $this->url.'search?name='.$this->request;
 
     // Get data and format response.
     $response = $this->get($url);
