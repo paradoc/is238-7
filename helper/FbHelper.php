@@ -126,7 +126,14 @@ class FbHelper
       $this->send_response($e->getMessage());
     }
 
-    if ($response)
-      $this->send_response($response);
+    if ($response) {
+      /* TODO: Globalize responses as arrays */
+      if (is_array($response)) {
+        foreach ($response as $resp)
+          $this->send_response($resp);
+      } else {
+        $this->send_response($response);
+      }
+    }
   }
 }
