@@ -14,36 +14,41 @@ class IMDB extends Strategy
   private $url = 'http://www.omdbapi.com/';
 
   /**
-   * undocumented function
+   * Formats raw response received from API.
    *
-   * @return void
+   * @param mixed $response Response received from HTTP Get.
+   * @return string Formatted response to be replied back to sender.
    */
   protected function format_response($response)
   {
     $formatted = null;
     $response_arr = json_decode($response, true);
 
-    // file_put_contents('php://stderr', print_r($response_arr, TRUE));
-
     $formatted = $response_arr['Title'].' ('.$response_arr['Year'].')\n'
-      .$response_arr['Plot'];
+      .'IMDB Rating: '.$response_arr['imdbRating'].'\n'
+      .'Plot: '.$response_arr['Plot'];
 
     return $formatted;
   }
 
   /**
-   * undocumented function
+   * Parses the request and sends a GET request to the URL.
    *
-   * @return void
+   * @return array Contains the response message and errors if any.
    */
   public function get_response()
   {
     $response = $err = null;
 
+    // Return as we require requests to be not empty.
     if (!$this->request) {
       $err = 'Please input a movie title.';
       return [$response, $err];
     }
+
+    // Modify spaces to '%20'.
+    $this->request = explode(' ', $this->request);
+    $this->request = implode('%20', $this->request);
 
     // Form request URL.
     $this->set_api_key('d8b8ba2c');

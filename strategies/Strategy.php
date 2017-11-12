@@ -4,12 +4,12 @@ namespace strategies;
 
 /**
  * Class Strategy
- * @author yourname
+ * @author Mark Johndy Coprada
  */
 abstract class Strategy
 {
   /**
-   * @param mixed $request
+   * @param string $request API request parameter.
    */
   public function __construct($request)
   {
@@ -18,8 +18,9 @@ abstract class Strategy
   }
 
   /**
-   * undocumented function
+   * Sets the API key.
    *
+   * @param string $key API key to be set.
    * @return void
    */
   public function set_api_key($key)
@@ -28,18 +29,18 @@ abstract class Strategy
   }
 
   /**
-   * undocumented function
+   * cURL interface for HTTP Get request.
    *
-   * @return void
+   * @param string $request URL request with parameters.
+   * @return mixed Response from cURL request.
    */
   public function get($request)
   {
-    // Initiate cURL.
+    // Initiate cURL and set options.
     $ch = curl_init($request);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-
-    //Execute the request
+    // Execute the request.
     $response = curl_exec($ch);
 
     // Cleanup.
@@ -49,15 +50,18 @@ abstract class Strategy
   }
 
   /**
-   * undocumented function
+   * Exposed method to be overridden by concrete strategies.
+   * Parses the request and sends a GET request to the URL.
    *
-   * @return void
+   * @return array Contains the response message and errors if any.
    */
   abstract public function get_response();
 
   /**
-   * undocumented function
+   * Protected method to be overridden by concrete strategies.
+   * Formats raw response received from API.
    *
+   * @param mixed $response Response received from HTTP Get.
    * @return void
    */
   abstract protected function format_response($response);
