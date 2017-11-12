@@ -23,10 +23,9 @@ class IMDB extends Strategy
     $formatted = null;
     $response_arr = json_decode($response, true);
 
-    // file_put_contents('php://stderr', print_r($response_arr, TRUE));
-
     $formatted = $response_arr['Title'].' ('.$response_arr['Year'].')\n'
-      .$response_arr['Plot'];
+      .'IMDB Rating: '.$response_arr['imdbRating'].'\n'
+      .'Plot: '.$response_arr['Plot'];
 
     return $formatted;
   }
