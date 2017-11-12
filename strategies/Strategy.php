@@ -50,6 +50,19 @@ abstract class Strategy
   }
 
   /**
+   * Converts whitespaces into '%20'.
+   *
+   * @return string Sanitized input.
+   */
+  protected function sanitize($input)
+  {
+    $sanitized = explode(' ', $input);
+    $sanitized = implode('%20', $sanitized);
+
+    return $sanitized;
+  }
+
+  /**
    * Exposed method to be overridden by concrete strategies.
    * Parses the request and sends a GET request to the URL.
    *
@@ -62,7 +75,7 @@ abstract class Strategy
    * Formats raw response received from API.
    *
    * @param mixed $response Response received from HTTP Get.
-   * @return void
+   * @return array Contains the formatted response.
    */
   abstract protected function format_response($response);
 }

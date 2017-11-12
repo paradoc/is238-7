@@ -8,10 +8,12 @@ require_once(__DIR__.'/../strategies/IP.php');
 use \strategies\IP as IP;
 require_once(__DIR__.'/../strategies/GENDER.php');
 use \strategies\GENDER as GENDER;
+require_once(__DIR__.'/../strategies/University.php');
+use \strategies\University as University;
 
 $_COMMANDS = [
   'IMDB', 'PHP', 'WEATHER', 'PHONE', 'GENDER', 'RECIPE', 'POKEDEX', 'IP',
-  'HISTORY', 'TRUMP', 'UNIVERSITY', 'NETFLIX',
+  'HISTORY', 'TRUMP', 'UNIVERSITY'
 ];
 
 /**
@@ -43,7 +45,7 @@ class Handler
 
     list($response, $err) = $this->parse();
     if ($err) {
-      throw new \Exception('Error in parsing: '.$err);
+      throw new \Exception($err);
     }
 
     return $response;
@@ -140,6 +142,8 @@ class Handler
       case 'GENDER':
         $strategy = new GENDER($this->message);
         break;
+      case 'UNIVERSITY':
+        $strategy = new University($this->message);
       default:
         break;
     }
