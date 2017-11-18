@@ -24,16 +24,17 @@ class Pokedex extends Strategy
     $formatted = [];
     $response_arr = json_decode($response, true);
 
-    if (!$response_arr)
+    if (!$response_arr || array_key_exists('detail', $response_arr))
       return 'There is no Pokemon with that name.';
 
+    $sprite = $response_arr['sprites']['front_default'];
     $type = $response_arr['types'][0]['type']['name'];
     $height = $response_arr['height'];
     $weight = $response_arr['weight'];
     $message = $this->request . ' is a(n) ' . $type . ' type pokemon. '
       .'Its height is ' . $height . ' and its weight is ' .$weight .'.';
 
-    array_push($formatted, $message);
+    array_push($formatted, $sprite, $message);
 
     return $formatted;
   }

@@ -3,6 +3,8 @@
 namespace helper;
 require_once('Handler.php');
 
+$_VALID_IMG_EXTS = ['jpg', 'jpeg', 'gif', 'png'];
+
 /**
  * Class FbHelper
  * @author Mark Johndy Coprada
@@ -73,6 +75,26 @@ class FbHelper
   }
 
   /**
+   * Analyzes the given URL if it is a valid image URL.
+   *
+   * @param string $url URL string.
+   * @return boolean True if the URL is an image URL; False otherwise.
+   */
+  private function is_image($url)
+  {
+    global $_VALID_IMG_EXTS;
+    $is_valid = false;
+
+    $parts = explode('.', $url);
+    $extension = array_pop($parts);
+
+    if (in_array($extension, $_VALID_IMG_EXTS))
+      $is_valid = true;
+
+    return $is_valid;
+  }
+
+  /**
    * Sends a response back to the sender using HTTP Post.
    *
    * @param string $message The message to be sent.
@@ -83,15 +105,32 @@ class FbHelper
     $api_url = 'https://graph.facebook.com/v2.6/me/messages?access_token='
       .$this->access_token;
 
-    // Form response.
-    $response = '{
-        "recipient": {
-            "id": "'.$this->get_request_data()['sender'].'"
+    $has_image = $this->is_image($message);
+
+    // Form message part.
+    $message_part = '"message": {';
+
+    if ($has_image) {
+      $message_part .= '"attachment": {'
+        .'"type": "image",'
+        .'"payload": {'
+          .'"url": "'.$message.'",'
+          .'"is_reusable": "true"'
+          .'}'
+        .'}';
+    } else {
+      $message_part .= '"text": "'.$message.'",';
+    }
+
+    $message_part .= '}';
+
+    // Form the rest of the response body.
+    $response = "{
+        \"recipient\": {
+            \"id\": \"{$this->get_request_data()['sender']}\"
         },
-        "message": {
-            "text": "'.$message.'"
-        }
-    }';
+        {$message_part}
+    }";
 
     // Initiate cURL.
     $ch = curl_init($api_url);
