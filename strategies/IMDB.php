@@ -21,15 +21,18 @@ class IMDB extends Strategy
    */
   protected function format_response($response)
   {
-    $formatted = null;
+    $formatted = [];
     $response_arr = json_decode($response, true);
 
     if ($response_arr['Response'] === 'False')
       return $response_arr['Error'];
 
-    $formatted = $response_arr['Title'].' ('.$response_arr['Year'].')\n'
+    $poster = $response_arr['Poster'];
+    $message = $response_arr['Title'].' ('.$response_arr['Year'].')\n'
       .'IMDB Rating: '.$response_arr['imdbRating'].'\n'
       .'Plot: '.$response_arr['Plot'];
+
+    array_push($formatted, $poster, $message);
 
     return $formatted;
   }
