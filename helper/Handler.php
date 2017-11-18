@@ -10,10 +10,12 @@ require_once(__DIR__.'/../strategies/GENDER.php');
 use \strategies\GENDER as GENDER;
 require_once(__DIR__.'/../strategies/University.php');
 use \strategies\University as University;
+require_once(__DIR__.'/../strategies/Pokedex.php');
+use \strategies\Pokedex as Pokedex;
 
 $_COMMANDS = [
   'IMDB', 'PHP', 'WEATHER', 'PHONE', 'GENDER', 'RECIPE', 'POKEDEX', 'IP',
-  'HISTORY', 'TRUMP', 'UNIVERSITY'
+  'HISTORY', 'TRUMP', 'UNIVERSITY', 'ECHO'
 ];
 
 /**
@@ -146,6 +148,10 @@ class Handler
         break;
       case 'UNIVERSITY':
         $strategy = new University($this->message);
+        break;
+      case 'POKEDEX':
+        $strategy = new Pokedex($this->message);
+        break;
       default:
         break;
     }
