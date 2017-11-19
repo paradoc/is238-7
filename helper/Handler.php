@@ -8,6 +8,8 @@ require_once(__DIR__.'/../strategies/IP.php');
 use \strategies\IP as IP;
 require_once(__DIR__.'/../strategies/GENDER.php');
 use \strategies\GENDER as GENDER;
+require_once(__DIR__.'/../strategies/HISTORY.php');
+use \strategies\HISTORY as HISTORY;
 require_once(__DIR__.'/../strategies/University.php');
 use \strategies\University as University;
 require_once(__DIR__.'/../strategies/Pokedex.php');
@@ -151,6 +153,9 @@ class Handler
         break;
       case 'POKEDEX':
         $strategy = new Pokedex($this->message);
+        break;
+      case 'HISTORY':
+        $strategy = new HISTORY($this->message);
         break;
       default:
         break;
