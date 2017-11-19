@@ -18,11 +18,10 @@ class GENDER extends Strategy
   {
     $formatted = null;
     $response_arr = json_decode($response, true);
-    // file_put_contents('php://stderr', print_r($response_arr, TRUE));
-    //$formatted = $response_arr['Title'].' ('.$response_arr['Year'].')\n'
-    //  .$response_arr['Plot'];
+    if ($response_arr['gender'] === null)
+      return "Sorry, that name has not yet been genderized.";
 
-    $formatted = ucfirst($response_arr['name']).' is most probably '.$response_arr['gender'].'.';
+    $formatted = ucfirst(strtolower($response_arr['name'])).' is most probably '.$response_arr['gender'].'.';
 
     return $formatted;
   }
