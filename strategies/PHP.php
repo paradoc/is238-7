@@ -6,12 +6,11 @@ require_once('Strategy.php');
 use \strategies\Strategy as Strategy;
 
 /**
- * Class IMDB
- * @author Mark Johndy Coprada
+ * Class PHP
  */
-class theEcho extends Strategy
+class PHP extends Strategy
 {
-  private $url = 'http://www.omdbapi.com/';
+  private $url = 'https://api.fixer.io/';
 
   /**
    * undocumented function
@@ -24,9 +23,12 @@ class theEcho extends Strategy
     $response_arr = json_decode($response, true);
 
     // file_put_contents('php://stderr', print_r($response_arr, TRUE));
-
-    $formatted = $response_arr['Title'].' ('.$response_arr['Year'].')\n'
-      .$response_arr['Plot'];
+	
+	#$formatted = '1' . $response_arr['rates[\'symbols\']'];
+	
+	echo $formatted_rates = $response_arr['rates'][0]['PHP'];
+	  
+    $formatted = 'Currency Rate as of ' . date("F j, Y") . " : 1 " . $response_arr['base'].' = ' . "1 PHP " . $formatted_rates;
 
     return $formatted;
   }
@@ -41,13 +43,13 @@ class theEcho extends Strategy
     $response = $err = null;
 
     if (!$this->request) {
-      $err = 'Please input a movie title.';
+      $err = 'Please provide a currency.';
       return [$response, $err];
     }
 
     // Form request URL.
-    $this->set_api_key('d8b8ba2c');
-    $url = $this->url.'?apikey='.$this->api_key.'&t='.$this->request;
+    #$this->set_api_key('d8b8ba2c');
+    $url = $this->url.'latest?base=USD&symbols='.$this->request;
 
     // Get data and format response.
     $response = $this->get($url);

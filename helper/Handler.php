@@ -14,6 +14,10 @@ require_once(__DIR__.'/../strategies/University.php');
 use \strategies\University as University;
 require_once(__DIR__.'/../strategies/Pokedex.php');
 use \strategies\Pokedex as Pokedex;
+require_once(__DIR__.'/../strategies/PHP.php');
+use \strategies\PHP as PHP;
+require_once(__DIR__.'/../strategies/theEcho.php');
+use \strategies\theEcho as theEcho;
 
 $_COMMANDS = [
   'IMDB', 'PHP', 'WEATHER', 'PHONE', 'GENDER', 'RECIPE', 'POKEDEX', 'IP',
@@ -156,6 +160,12 @@ class Handler
         break;
       case 'HISTORY':
         $strategy = new HISTORY($this->message);
+        break;
+	  case 'PHP':
+        $strategy = new PHP($this->message);
+        break;
+      case 'ECHO':
+        $strategy = new theEcho($this->message);
         break;
       default:
         break;
