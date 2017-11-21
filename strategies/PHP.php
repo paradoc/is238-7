@@ -19,16 +19,16 @@ class PHP extends Strategy
    */
   protected function format_response($response)
   {
-    $formatted = null;
+    $formatted = [];
     $response_arr = json_decode($response, true);
 
     // file_put_contents('php://stderr', print_r($response_arr, TRUE));
 	
 	#$formatted = '1' . $response_arr['rates[\'symbols\']'];
 	
-	echo $formatted_rates = $response_arr['rates'][0]['PHP'];
+	echo $formatted_rates = $response_arr['rates'][$this->request];
 	  
-    $formatted = 'Currency Rate as of ' . date("F j, Y") . " : 1 " . $response_arr['base'].' = ' . "1 PHP " . $formatted_rates;
+    $formatted = 'Currency Rate \n' . 'Date: ' . date("F j, Y") . '\n' . '1 ' . $response_arr['base'].' = ' . $formatted_rates . ' ' . $this->request;
 
     return $formatted;
   }
