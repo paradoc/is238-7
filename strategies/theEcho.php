@@ -11,7 +11,6 @@ use \strategies\Strategy as Strategy;
  */
 class theEcho extends Strategy
 {
-  private $url = 'http://www.omdbapi.com/';
 
   /**
    * undocumented function
@@ -41,17 +40,13 @@ class theEcho extends Strategy
     $response = $err = null;
 
     if (!$this->request) {
-      $err = 'Please input a movie title.';
+      $err = 'Please write a message.';
       return [$response, $err];
     }
 
-    // Form request URL.
-    $this->set_api_key('d8b8ba2c');
-    $url = $this->url.'?apikey='.$this->api_key.'&t='.$this->request;
 
     // Get data and format response.
-    $response = $this->get($url);
-    $response = $this->format_response($response);
+    $response = $this->request;
 
     return [$response, $err];
   }
