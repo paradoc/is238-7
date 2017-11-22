@@ -26,9 +26,9 @@ class PHP extends Strategy
 	
 	#$formatted = '1' . $response_arr['rates[\'symbols\']'];
 	
-	echo $formatted_rates = $response_arr['rates'][$this->request];
+	echo $formatted_rates = $response_arr['rates'][strtoupper($this->request)];
 	  
-    $formatted = 'Currency Rate \n' . 'Date: ' . date("F j, Y") . '\n' . '1 ' . $response_arr['base'].' = ' . $formatted_rates . ' ' . $this->request;
+    $formatted = 'Currency Rate \n' . 'Date: ' . date("F j, Y") . '\n' . '1 ' . $response_arr['base'].' = ' . $formatted_rates . ' ' . strtoupper($this->request);
 
     return $formatted;
   }
@@ -49,7 +49,7 @@ class PHP extends Strategy
 
     // Form request URL.
     #$this->set_api_key('d8b8ba2c');
-    $url = $this->url.'latest?base=USD&symbols='.$this->request;
+    $url = $this->url.'latest?base=USD';
 
     // Get data and format response.
     $response = $this->get($url);
