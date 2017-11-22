@@ -28,7 +28,14 @@ class PHP extends Strategy
 	
 	echo $formatted_rates = $response_arr['rates'][strtoupper($this->request)];
 	  
-    $formatted = 'Currency Rate \n' . 'Date: ' . date("F j, Y") . '\n' . '1 ' . $response_arr['base'].' = ' . $formatted_rates . ' ' . strtoupper($this->request);
+	  if (is_null($formatted_rates)){
+		//$formatted = 'No ' . strtoupper($this->request) . ' currency found. Try one of the following: \n \n AUD - Australian Dollars \n BGN - Bulgarian Lev \n BRL - Brazilian Real \n CAD - Canadian Dollars \n CHF - Swiss Franc \n CNY - Chinese Yuan \n CZK - Czech Koruna \n DKK - Denmark Krone \n GBP - Great Britain Pound \n HKD - Hong Kong Dollar \n HRK - Croatia Kuna \n HUF - Hungary Forint \n IDR - Indonesia Rupiah \n ILS - Israel New Shekel \n INR - India Rupee \n JPY - Japan Yen \n KRW - South Korea Won \n MXN - Mexico Peso \n MYR - Malaysia Ringgit \n NOK - Norway Kroner \n NZD - New Zealand Dollar \n PHP - Philippine Peso \n PLN - Poland Zloty \n RON - Romania New Lei \n RUB - Russia Rouble \n SEK - Sweden Krona \n SGD - Singapore Dollar \n THB - Thailand Baht \n TRY - Turkish New Lira \n ZAR - South Africa Rand \n EUR - Euro';
+		$formatted = 'No ' . strtoupper($this->request) . ' currency found. Try one of the following: \n \n AUD, BGN, BRL, CAD, CHF, CNY, CZK, DKK, GBP, HKD, HRK, HUF, IDR, ILS, INR, JPY, KRW, MXN, MYR, NOK, NZD, PHP, PLN, RON, RUB, SEK, SGD, THB, TRY, ZAR, EUR';
+	  }
+	  else{
+		  $formatted = 'Currency Rate \n' . 'Date: ' . date("F j, Y") . '\n' . '1 ' . $response_arr['base'].' = ' . $formatted_rates . ' ' . strtoupper($this->request);
+	  }
+	  
 
     return $formatted;
   }
