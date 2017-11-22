@@ -22,6 +22,8 @@ require_once(__DIR__.'/../strategies/PHONE.php');
 use \strategies\Phone as Phone;
 require_once(__DIR__.'/../strategies/TRUMP.php');
 use \strategies\Trump as Trump;
+require_once(__DIR__.'/../strategies/WEATHER.php');
+use \strategies\WEATHER as WEATHER;
 
 $_COMMANDS = [
   'IMDB', 'PHP', 'WEATHER', 'PHONE', 'GENDER', 'RECIPE', 'POKEDEX', 'IP',
@@ -176,6 +178,9 @@ class Handler
         break;
 	  case 'TRUMP':
         $strategy = new Trump($this->message);
+        break;
+	  case 'WEATHER':
+        $strategy = new WEATHER($this->message);
         break;
 
       default:
