@@ -18,6 +18,8 @@ require_once(__DIR__.'/../strategies/PHP.php');
 use \strategies\PHP as PHP;
 require_once(__DIR__.'/../strategies/theEcho.php');
 use \strategies\theEcho as theEcho;
+require_once(__DIR__.'/../strategies/PHONE.php');
+use \strategies\Phone as Phone;
 
 $_COMMANDS = [
   'IMDB', 'PHP', 'WEATHER', 'PHONE', 'GENDER', 'RECIPE', 'POKEDEX', 'IP',
@@ -166,6 +168,9 @@ class Handler
         break;
       case 'ECHO':
         $strategy = new theEcho($this->message);
+        break;
+	  case 'PHONE':
+        $strategy = new Phone($this->message);
         break;
       default:
         break;
