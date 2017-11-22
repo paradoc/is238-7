@@ -6,12 +6,12 @@ require_once('Strategy.php');
 use \strategies\Strategy as Strategy;
 
 /**
- * Class Phone
+ * Class Trump
  * @author Aneurin Boquer
  */
-class Phone extends Strategy
+class Trump extends Strategy
 {
-  private $url = 'http://apilayer.net/api/validate';
+  private $url = 'https://api.tronalddump.io/search/quote?query=';
 
   /**
    * Formats raw response received from API.
@@ -22,16 +22,20 @@ class Phone extends Strategy
   protected function format_response($response)
   {
     $formatted = [];
-    $country = NULL;
+    //$country = NULL;
 	$response_arr = json_decode($response, true);
+	
+	file_put_contents('php://stderr', print_r($response_arr['_embedded']['quotes'][0]['value'], true));
+	
+	
 
-    if (!$response_arr['country_name']) 
+    if (!$response_arr['_embedded']['quotes'][0]['value']) 
 		{
 		return 'No data available. Pls. try again.';
 		}
 	else 
 		{
-		$formatted = $response_arr['country_name'];
+		$formatted = $response_arr['_embedded']['quotes'][0]['value'];
 		}
     return $formatted;
   }
@@ -47,7 +51,7 @@ class Phone extends Strategy
 
     // Return as we require requests to be not empty.
     if (!$this->request) {
-      $err = 'Please input a Phone number.';
+      $err = 'Please input a keyword from Trump\'s quotes.';
       return [$response, $err];
     }
 
@@ -55,8 +59,8 @@ class Phone extends Strategy
     $this->request = $this->sanitize($this->request);
 
     // Form request URL.
-	$this->set_api_key('870d2a71dc07f91ac59e27586457d28b');
-    $url = $this->url.'?access_key='.$this->api_key.'&number='.$this->request;
+	//$this->set_api_key('870d2a71dc07f91ac59e27586457d28b');
+    $url = $this->url.''.$this->request;
 
     // Get data and format response.
     $response = $this->get($url);

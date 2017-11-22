@@ -20,6 +20,8 @@ require_once(__DIR__.'/../strategies/theEcho.php');
 use \strategies\theEcho as theEcho;
 require_once(__DIR__.'/../strategies/PHONE.php');
 use \strategies\Phone as Phone;
+require_once(__DIR__.'/../strategies/TRUMP.php');
+use \strategies\Trump as Trump;
 
 $_COMMANDS = [
   'IMDB', 'PHP', 'WEATHER', 'PHONE', 'GENDER', 'RECIPE', 'POKEDEX', 'IP',
@@ -172,6 +174,10 @@ class Handler
 	  case 'PHONE':
         $strategy = new Phone($this->message);
         break;
+	  case 'TRUMP':
+        $strategy = new Trump($this->message);
+        break;
+
       default:
         break;
     }
