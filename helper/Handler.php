@@ -10,6 +10,8 @@ require_once(__DIR__.'/../strategies/GENDER.php');
 use \strategies\GENDER as GENDER;
 require_once(__DIR__.'/../strategies/HISTORY.php');
 use \strategies\HISTORY as HISTORY;
+require_once(__DIR__.'/../strategies/BIT.php');
+use \strategies\BIT as BIT;
 require_once(__DIR__.'/../strategies/University.php');
 use \strategies\University as University;
 require_once(__DIR__.'/../strategies/Pokedex.php');
@@ -27,7 +29,7 @@ use \strategies\WEATHER as WEATHER;
 
 $_COMMANDS = [
   'IMDB', 'PHP', 'WEATHER', 'PHONE', 'GENDER', 'RECIPE', 'POKEDEX', 'IP',
-  'HISTORY', 'TRUMP', 'UNIVERSITY', 'ECHO'
+  'HISTORY', 'TRUMP', 'UNIVERSITY', 'ECHO', 'BIT'
 ];
 
 /**
@@ -167,22 +169,24 @@ class Handler
       case 'HISTORY':
         $strategy = new HISTORY($this->message);
         break;
-	  case 'PHP':
+	    case 'PHP':
         $strategy = new PHP($this->message);
         break;
       case 'ECHO':
         $strategy = new theEcho($this->message);
         break;
-	  case 'PHONE':
+	    case 'PHONE':
         $strategy = new Phone($this->message);
         break;
-	  case 'TRUMP':
+	    case 'TRUMP':
         $strategy = new Trump($this->message);
         break;
-	  case 'WEATHER':
+	    case 'WEATHER':
         $strategy = new WEATHER($this->message);
         break;
-
+      case 'BIT':
+        $strategy = new BIT($this->message);
+        break;
       default:
         break;
     }

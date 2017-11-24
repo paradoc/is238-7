@@ -51,17 +51,26 @@ class HISTORY extends Strategy
     else {
         $date = explode(' ',$this->request);
 
-        if ($date[0] > 12 || $date[1] > 31 || ($date[0] == 2 && $date[1] > 29)) {
-          $err = "Sorry, that's an invalid date.";
+        if (count($date) !== 2) {
+            $err = "Sorry, syntax error. Try using two numbers for month and day, for September 7 for example, HISTORY 9 7.";
         }
-        else {
-          // Form request URL
-          $url = $this->url.'/'.$date[0].'/'.$date[1];
 
-          // Get data and format response.
-          $response = $this->get($url);
+        else if (!is_numeric($date[0]) || !is_numeric($date[1])) {
+            $err = "Sorry, I don't understand long dates. Try using numbers for month and day, for September 7 for example, HISTORY 9 7.";
         }
+
+        else if ($date[0] > 12 || $date[1] > 31 || ($date[0] == 2 && $date[1] > 29)) {
+            $err = "Sorry, that's an invalid date. Please try another.";
+        }
+
+        else {
+              // Form request URL
+              $url = $this->url.'/'.$date[0].'/'.$date[1];
+
+              // Get data and format response.
+              $response = $this->get($url);
+            }
+        }
+      return [$response, $err];
     }
-    return [$response, $err];
-  }
 }
