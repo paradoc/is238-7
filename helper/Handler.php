@@ -31,7 +31,7 @@ use \strategies\Recipe as Recipe;
 
 $_COMMANDS = [
   'IMDB', 'PHP', 'WEATHER', 'PHONE', 'GENDER', 'RECIPE', 'POKEDEX', 'IP',
-  'HISTORY', 'TRUMP', 'UNIVERSITY', 'ECHO', 'BIT'
+  'HISTORY', 'TRUMP', 'UNIVERSITY', 'ECHO', 'BIT', 'HELP'
 ];
 
 /**
@@ -60,7 +60,7 @@ class Handler
     /* TODO: Update error messages. */
     $err = $this->lex();
     if ($err) {
-      throw new \Exception('Error in token: '.$err);
+      throw new \Exception('Error in token: '.$err.'. Enter HELP for details.');
     }
 
     list($response, $err) = $this->parse();
@@ -192,6 +192,23 @@ class Handler
       case 'RECIPE':
         $strategy = new Recipe($this->message);
         break;
+      case 'HELP':
+        $help = [
+          'Here are the available commands (case insensitive):',
+          'ECHO <message>',
+          'IMDB <movie title>',
+          'PHP <currency>',
+          'WEATHER <city>',
+          'PHONE <area code and number> (i.e. 639171234567)',
+          'GENDER <name>',
+          'RECIPE <ingredient>',
+          'POKEDEX <pokemon>',
+          'IP <ip address>',
+          'HISTORY [optional date] (i.e. 11 30)',
+          'UNIVERSITY <name>',
+          'BIT <cryptocurrency> (i.e. BTC, ETH, XRP)',
+        ];
+        return [$help, null];
       default:
         break;
     }

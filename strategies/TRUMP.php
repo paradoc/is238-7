@@ -22,21 +22,19 @@ class Trump extends Strategy
   protected function format_response($response)
   {
     $formatted = [];
-    //$country = NULL;
-	$response_arr = json_decode($response, true);
-	
-	file_put_contents('php://stderr', print_r($response_arr['_embedded']['quotes'][0]['value'], true));
-	
-	
+    $response_arr = json_decode($response, true);
 
-    if (!$response_arr['_embedded']['quotes'][0]['value']) 
-		{
-		return 'No data available. Pls. try again.';
-		}
-	else 
-		{
-		$formatted = $response_arr['_embedded']['quotes'][0]['value'];
-		}
+    if (!$response_arr['_embedded']['quotes'][0]['value'])
+    {
+      return 'No data available. Pls. try again.';
+    }
+    else
+    {
+      $formatted = $response_arr['_embedded']['quotes'][0]['value'];
+      $formatted = preg_replace('/\\"/', '\'', $formatted);
+      $formatted = preg_replace('/\\n/', '', $formatted);
+    }
+
     return $formatted;
   }
 
@@ -59,7 +57,6 @@ class Trump extends Strategy
     $this->request = $this->sanitize($this->request);
 
     // Form request URL.
-	//$this->set_api_key('870d2a71dc07f91ac59e27586457d28b');
     $url = $this->url.''.$this->request;
 
     // Get data and format response.
