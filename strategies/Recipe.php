@@ -28,7 +28,12 @@ class Recipe extends Strategy
     if (!$response_arr['results'])
       return 'There are no dishes with that ingredient.';
 
-    if ($response_arr['results'] > 3) {
+    $count = count($response_arr['results']);
+
+    if ($count > 3) {
+      array_push($formatted, 'There were '.$count.' results in your search. '
+        .'Here are some of them:');
+
       $selected = $this->randomize(count($response_arr['results']));
 
       foreach ($selected as $value) {
@@ -38,8 +43,6 @@ class Recipe extends Strategy
         array_push($formatted, $message);
       }
     } else {
-      $count = count($response_arr['results']);
-
       for ($i = 0; $i < $count; $i++) {
         $data = $response_arr['results'][$i];
         $title = preg_replace('/\\n/', '', $data['title']);
@@ -47,8 +50,6 @@ class Recipe extends Strategy
         array_push($formatted, $message);
       }
     }
-
-    file_put_contents('php://stderr', print_r($formatted,true));
 
     return $formatted;
   }
